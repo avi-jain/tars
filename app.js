@@ -5,6 +5,20 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+//Mongoose
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
+mongoose.connect('mongodb://localhost/test');
+
+//Passport
+var passport = require('passport');
+var JwtStrategy = require('passport-jwt').Strategy;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
+var jwt = require('jsonwebtoken');
+const secret = 'boobs';
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -12,7 +26,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -24,6 +38,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+app.get('/test',/*auth middleware*/ (req, res) => {
+    res.send('user id is ' + req.user._id);
+});s
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
